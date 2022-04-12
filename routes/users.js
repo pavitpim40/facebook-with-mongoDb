@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const res = require("express/lib/response");
 
 router.get("/", (req, res) => {
 	res.send("hey its user route");
@@ -44,6 +43,17 @@ router.delete("/:id", async (req, res) => {
 		}
 	} else {
 		res.status(403).json("You can delete only your account");
+	}
+});
+
+// get user
+router.get("/:id", async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id);
+		const { password, updatedAt, isAdmin, ...other } = user._doc;
+		res.status(200).json(other);
+	} catch (err) {
+		res.status(500).json(err);
 	}
 });
 module.exports = router;
